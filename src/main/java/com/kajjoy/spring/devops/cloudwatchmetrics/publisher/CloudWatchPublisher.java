@@ -26,6 +26,9 @@ public class CloudWatchPublisher {
     @Value("${actuator.metrics.to.publish}")
     private String[] metricsToPublish;
 
+    @Value("${actuator.metrics.units}")
+    private String[] meticsUnits;
+
     @Value("${cloudwatch.namespace}")
     private String cloudWatchNamespace;
 
@@ -38,6 +41,7 @@ public class CloudWatchPublisher {
     public void publishCloudWatchMetrics(){
         if(metricsToPublish != null && metricsToPublish.length!=0){
             List<String> keys = Arrays.asList(metricsToPublish);
+            List<String> units = Arrays.asList(meticsUnits);
             metricsEndpoint.invoke().forEach((key, value) -> {
                 if(keys.contains(key)){
                     System.out.println(System.currentTimeMillis());
