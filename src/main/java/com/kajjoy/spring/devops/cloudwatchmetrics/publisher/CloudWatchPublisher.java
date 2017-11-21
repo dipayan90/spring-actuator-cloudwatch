@@ -8,8 +8,9 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.util.Arrays;
-import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Component
 public class CloudWatchPublisher {
@@ -40,13 +41,18 @@ public class CloudWatchPublisher {
     @Scheduled(cron = "${spring.operational.metrics.cloudwatch.publish.cron:*/10 * * * * *}")
     public void publishCloudWatchMetrics(){
         if(metricsToPublish != null && metricsToPublish.length!=0){
-            List<String> keys = Arrays.asList(metricsToPublish);
-            List<String> units = Arrays.asList(meticsUnits);
+            if(metricsToPublish.length != meticsUnits.length){
+                throw new IllegalArgumentException("All metrics should have associated units");
+            }
+
+            Map<String, StandardUnit> metricsMap = IntStream.range(0, metricsToPublish.length).boxed()
+                    .collect(Collectors.toMap(i -> metricsToPublish[i], i -> StandardUnit.valueOf(meticsUnits[i])));
+
             metricsEndpoint.invoke().forEach((key, value) -> {
-                if(keys.contains(key)){
+                if(metricsMap.containsKey(key)){
                     System.out.println(System.currentTimeMillis());
                     System.out.println(key + " : " + value.toString());
-                    publish(key,StandardUnit.Count,"count",key,Double.valueOf(value.toString()));
+                    publish(key,metricsMap.get(key),metricsMap.get(key).toString(),key,Double.valueOf(value.toString()));
                 }
             });
         }else {
