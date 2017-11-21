@@ -1,17 +1,21 @@
 package com.kajjoy.spring.devops.cloudwatchmetrics;
 
 import com.kajjoy.spring.devops.cloudwatchmetrics.publisher.CloudWatchPublisher;
+import com.kajjoy.spring.devops.cloudwatchmetrics.service.CloudWatchService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.boot.actuate.autoconfigure.MetricExportAutoConfiguration;
+import org.springframework.boot.actuate.endpoint.MetricsEndpoint;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
 
 @RunWith(SpringRunner.class)
-@SpringBootConfiguration
 @SpringBootTest
+@TestPropertySource("/test.properties")
 public class CloudwatchMetricsApplicationTests {
 
     @Resource

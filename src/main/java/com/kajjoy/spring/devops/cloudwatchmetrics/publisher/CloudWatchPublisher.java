@@ -1,5 +1,6 @@
 package com.kajjoy.spring.devops.cloudwatchmetrics.publisher;
 
+import com.amazonaws.services.cloudwatch.model.StandardUnit;
 import com.kajjoy.spring.devops.cloudwatchmetrics.service.CloudWatchService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.endpoint.MetricsEndpoint;
@@ -25,6 +26,9 @@ public class CloudWatchPublisher {
     @Value("${actuator.metrics.to.publish}")
     private String[] metricsToPublish;
 
+    @Value("${cloudwatch.namespace}")
+    private String cloudWatchNamespace;
+
     /**
      * Defaults: Every 10 seconds, can be overwritten using applications properties
      *
@@ -38,6 +42,7 @@ public class CloudWatchPublisher {
                 if(keys.contains(key)){
                     System.out.println(System.currentTimeMillis());
                     System.out.println(key + " : " + value.toString());
+                    publish(key,StandardUnit.Count,"count",key,Double.valueOf(value.toString()));
                 }
             });
         }else {
@@ -47,6 +52,10 @@ public class CloudWatchPublisher {
             });
         }
 
+    }
+
+    private void publish(String metricName, StandardUnit unit,String dimensionName,String dimensionValue,double dataPoint){
+        cloudWatchService.publish(cloudWatchNamespace,metricName,unit,dimensionName,dimensionValue,dataPoint);
     }
 
 }
