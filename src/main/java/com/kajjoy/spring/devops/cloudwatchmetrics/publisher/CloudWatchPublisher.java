@@ -8,6 +8,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -59,9 +60,23 @@ public class CloudWatchPublisher {
             metricsEndpoint.invoke().forEach((key, value) -> {
                 System.out.println(System.currentTimeMillis());
                 System.out.println(key + " : " + value.toString());
+                if(getDefaultUnit(key) != null){
+                    publish(key,StandardUnit.valueOf(getDefaultUnit(key)),getDefaultUnit(key),key,Double.valueOf(value.toString()));
+                }
             });
         }
 
+    }
+
+    private String getDefaultUnit(String metricName){
+        Map<String,String> metricUnitMap = new HashMap<>();
+        metricUnitMap.put("mem","Kilobytes");
+        metricUnitMap.put("mem.free","Kilobytes");
+        metricUnitMap.put("heap","Kilobytes");
+        metricUnitMap.put("heap.used","Kilobytes");
+        metricUnitMap.put("threads","Count");
+        metricUnitMap.put("classes.loaded","Count");
+        return metricUnitMap.getOrDefault(metricName, null);
     }
 
     private void publish(String metricName, StandardUnit unit,String dimensionName,String dimensionValue,double dataPoint){
