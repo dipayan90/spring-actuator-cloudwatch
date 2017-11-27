@@ -6,6 +6,6 @@ import com.amazonaws.auth.profile.ProfileCredentialsProvider;
 
 class CredentialProviderChain extends AWSCredentialsProviderChain{
     CredentialProviderChain() {
-        super(new ProfileCredentialsProvider("nordstrom-federated"), new ClasspathPropertiesFileCredentialsProvider(), new SystemPropertiesCredentialsProvider(), new EnvironmentVariableCredentialsProvider());
+        super(new ProfileCredentialsProvider("federated-profile-name"), new ClasspathPropertiesFileCredentialsProvider(), new SystemPropertiesCredentialsProvider(), new EnvironmentVariableCredentialsProvider());
     }
 }
