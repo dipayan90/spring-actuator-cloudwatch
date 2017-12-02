@@ -61,7 +61,7 @@ e.) Custom cloudwatch namespace that you would want to use for these metrics.
 <dependency>
   <groupId>com.kajjoy.spring.devops</groupId>
   <artifactId>cloudwatch-metrics</artifactId>
-  <version>1.0</version>
+  <version>1.1</version>
   <type>pom</type>
 </dependency>
 ```
