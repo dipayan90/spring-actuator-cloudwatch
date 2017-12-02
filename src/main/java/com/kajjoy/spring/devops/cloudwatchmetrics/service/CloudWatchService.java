@@ -5,7 +5,6 @@ import com.amazonaws.auth.AWSCredentialsProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import com.amazonaws.services.cloudwatch.AmazonCloudWatch;
 import com.amazonaws.services.cloudwatch.AmazonCloudWatchClientBuilder;
 import com.amazonaws.services.cloudwatch.model.Dimension;
 import com.amazonaws.services.cloudwatch.model.MetricDatum;
@@ -23,20 +22,11 @@ public class CloudWatchService {
     @Resource
     private AWSCredentialsProvider awsCredentialsProvider;
 
-
     /**
      * Defaults to us-west-2
      */
     @Value("${aws.cloudwatch.region: us-west-2}")
     private String awsRegion;
-
-    private final AmazonCloudWatch cw = AmazonCloudWatchClientBuilder
-            .standard()
-            .withClientConfiguration(clientConfiguration)
-            .withCredentials(awsCredentialsProvider)
-            .withRegion(awsRegion)
-            .build();
-
 
     public void publish(String nameSpace,String metricName,StandardUnit unit,String dimensionName,String dimensionValue,double dataPoint){
         Dimension dimension = new Dimension()
@@ -53,7 +43,12 @@ public class CloudWatchService {
                 .withNamespace(nameSpace)
                 .withMetricData(datum);
 
-        PutMetricDataResult response = cw.putMetricData(request);
+        PutMetricDataResult response = AmazonCloudWatchClientBuilder
+                .standard()
+                .withClientConfiguration(clientConfiguration)
+                .withCredentials(awsCredentialsProvider)
+                .withRegion(awsRegion)
+                .build().putMetricData(request);
     }
 
 }
