@@ -20,6 +20,7 @@ However here is the quickstart:
     }
 
 ```
+It has to be a spring bean. 
 
 2.) Define an AWS Credential Provider bean:
 
