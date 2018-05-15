@@ -20,7 +20,6 @@ However here is the quickstart:
     }
 
 ```
-It has to be a spring bean. 
 
 2.) Define an AWS Credential Provider bean:
 
@@ -31,6 +30,8 @@ It has to be a spring bean.
     }
 ```
 
+Note: Both of these have to be spring beans, since they will be searched by the library.
+
 3.) Define few configurable properties for the library:
 
 ```java
@@ -39,6 +40,18 @@ aws.cloudwatch.region=us-west-2
 actuator.metrics.to.publish=mem.free,heap.used,threads.totalStarted
 actuator.metrics.units=Kilobytes,Kilobytes,Count
 cloudwatch.namespace=spring-actuator-cloudwatch
+```
+Note: Number of metrics_to_publish values should be same as number of metrics_units. 
+
+4.) Add Two Beans in to your Component Scan, If you are using spring boot, then do something like this:
+```java
+@SpringBootApplication(scanBasePackageClasses = { CloudWatchPublisher.class, CloudWatchService.class})
+public class SpringBootApp {
+
+	 public static void main(String[] args) throws Exception {
+		SpringApplication.run(SpringBootApp.class);
+	}
+}
 ```
 
 And that's about it. What do the configurable properties let you do:
@@ -63,6 +76,5 @@ e.) Custom cloudwatch namespace that you would want to use for these metrics.
   <groupId>com.kajjoy.spring.devops</groupId>
   <artifactId>cloudwatch-metrics</artifactId>
   <version>1.1</version>
-  <type>pom</type>
 </dependency>
 ```
